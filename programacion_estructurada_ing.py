@@ -15,7 +15,7 @@ usuarios = {
     "samantha": "pass",
     "nicol": "2024",
     "blanca": "bla123",
-    "carlos": "carlos456",
+    "borys": "4567",
     "andrea": "andrea789",
     "jose": "jose321",
     "camila": "camila654",
