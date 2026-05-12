@@ -6,62 +6,94 @@ import tkinter as tk
 from tkinter import messagebox
 
 # Constante
-MAXIMO_USUARIOS = 3
+MAXIMO_USUARIOS = 10
 
 # Datos
 usuarios = {
     "admin": "1234",
     "santiago": "abcd",
-    "user": "pass"
+    "samantha": "pass",
+    "nicol": "2024",
+    "blanca": "maria123",
+    "carlos": "carlos456",
+    "andrea": "andrea789",
+    "jose": "jose321",
+    "camila": "camila654",
+    "david": "david987"
 }
 
 
 def validar_credenciales(nombre_usuario, contrasena):
     """Valida si las credenciales son correctas"""
+    
     if len(usuarios) > MAXIMO_USUARIOS:
         return None
 
     if nombre_usuario in usuarios:
         if usuarios[nombre_usuario] == contrasena:
             return True
-    return False
 
+    return False
 
 def mostrar_resultado(acceso_valido):
     """Muestra el resultado del acceso"""
+    
     if acceso_valido is True:
         messagebox.showinfo("Acceso", "Acceso concedido")
+
     elif acceso_valido is False:
         messagebox.showerror("Acceso", "Acceso denegado")
-    else:
-        messagebox.showerror("Error", "Se excedió el número máximo de usuarios")
 
+    else:
+        messagebox.showerror(
+            "Error","Se excedió el número máximo de usuarios")
 
 def iniciar_sesion():
     """Obtiene los datos desde la interfaz"""
+    
     nombre_usuario = entrada_usuario.get()
     contrasena = entrada_contrasena.get()
-    acceso_valido = validar_credenciales(nombre_usuario, contrasena)
-    mostrar_resultado(acceso_valido)
 
+    acceso_valido = validar_credenciales(
+        nombre_usuario,
+        contrasena
+    )
+
+    mostrar_resultado(acceso_valido)
 
 def crear_interfaz():
     """Crea la ventana principal"""
+    
     global entrada_usuario, entrada_contrasena
 
     ventana = tk.Tk()
     ventana.title("Acceso - Estructurado")
-    ventana.geometry("300x200")
+    ventana.geometry("300x250")
 
-    tk.Label(ventana, text="Usuario").pack(pady=5)
+    tk.Label(
+        ventana,
+        text="Usuario"
+    ).pack(pady=5)
+
     entrada_usuario = tk.Entry(ventana)
     entrada_usuario.pack()
 
-    tk.Label(ventana, text="Contraseña").pack(pady=5)
-    entrada_contrasena = tk.Entry(ventana, show="*")
+    tk.Label(
+        ventana,
+        text="Contraseña"
+    ).pack(pady=5)
+
+    entrada_contrasena = tk.Entry(
+        ventana,
+        show="*"
+    )
     entrada_contrasena.pack()
 
-    tk.Button(ventana, text="Ingresar", command=iniciar_sesion).pack(pady=15)
+    tk.Button(
+        ventana,
+        text="Ingresar",
+        command=iniciar_sesion
+    ).pack(pady=15)
 
     ventana.mainloop()
 
