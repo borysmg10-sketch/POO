@@ -1,6 +1,5 @@
 """
 Programa: Sistema de acceso (Programación Estructurada con interfaz)
-Propósito: Validar usuario y contraseña mediante una interfaz gráfica.
 """
 
 import tkinter as tk
