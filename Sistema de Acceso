@@ -1,0 +1,39 @@
+"""
+Programa: Sistema de acceso
+Propósito: Validar usuario y contraseña usando Programación Orientada a Objetos.
+"""
+
+class SistemaAcceso:
+    # Constructor
+    def __init__(self):
+        self.usuarios = {
+            "admin": "1234",
+            "nicol": "abcd",
+            "santiago": "5678"
+        }
+
+    # Método para validar acceso
+    def validar_usuario(self, usuario, contraseña):
+        if usuario in self.usuarios:
+            if self.usuarios[usuario] == contraseña:
+                return "Acceso permitido"
+            else:
+                return "Contraseña incorrecta"
+        else:
+            return "Usuario no encontrado"
+
+    # Método principal
+    def iniciar_sistema(self):
+        print("===== SISTEMA DE ACCESO =====")
+
+        usuario = input("Ingrese usuario: ")
+        contraseña = input("Ingrese contraseña: ")
+
+        resultado = self.validar_usuario(usuario, contraseña)
+        print(resultado)
+
+# Crear objeto
+sistema = SistemaAcceso()
+
+# Ejecutar programa
+sistema.iniciar_sistema()
