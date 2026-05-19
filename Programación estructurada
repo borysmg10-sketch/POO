@@ -1,0 +1,490 @@
+import tkinter as tk
+from tkinter import messagebox
+import re
+
+# CONSTANTES
+MAXIMO_USUARIOS = 3
+
+# USUARIOS DEL SISTEMA
+usuarios = {
+    "admin": "1234",
+    "santiago": "abcd",
+    "user": "pass"
+}
+
+# LISTA DE CLIENTES
+clientes = []
+
+def validar_credenciales(nombre_usuario, contrasena):
+
+    if len(usuarios) > MAXIMO_USUARIOS:
+        return None
+
+    if nombre_usuario in usuarios:
+
+        if usuarios[nombre_usuario] == contrasena:
+            return True
+
+    return False
+
+# VALIDAR NOMBRE
+def validar_nombre(nombre):
+
+    patron = r"^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$"
+
+    return re.match(patron, nombre)
+
+
+# VALIDAR CÉDULA POR PAÍS
+def validar_cedula(pais, cedula):
+
+    # ECUADOR
+    if pais == "EC":
+        return len(cedula) == 10 and cedula.isdigit()
+
+    # PERÚ
+    elif pais == "PE":
+        return len(cedula) == 8 and cedula.isdigit()
+
+    # ESPAÑA
+    elif pais == "ES":
+        return len(cedula) == 8 and cedula.isdigit()
+
+    # COLOMBIA
+    elif pais == "CO":
+        return len(cedula) == 10 and cedula.isdigit()
+
+    # MÉXICO
+    elif pais == "MX":
+
+        patron = r"^[A-Za-z0-9]{10,18}$"
+
+        return re.match(patron, cedula)
+
+    return False
+
+
+# VALIDAR TELÉFONO POR PAÍS
+def validar_telefono(pais, telefono):
+
+    # ECUADOR
+    if pais == "EC":
+        return (
+            len(telefono) == 10
+            and telefono.startswith("09")
+            and telefono.isdigit()
+        )
+
+    # PERÚ
+    elif pais == "PE":
+        return (
+            len(telefono) == 9
+            and telefono.startswith("9")
+            and telefono.isdigit()
+        )
+
+    # COLOMBIA
+    elif pais == "CO":
+        return (
+            len(telefono) == 10
+            and telefono.startswith("3")
+            and telefono.isdigit()
+        )
+
+    # MÉXICO
+    elif pais == "MX":
+        return (
+            len(telefono) == 10
+            and telefono.startswith("1")
+            and telefono.isdigit()
+        )
+
+    # ESPAÑA
+    elif pais == "ES":
+        return (
+            len(telefono) == 9
+            and telefono.startswith("6")
+            and telefono.isdigit()
+        )
+
+    return False
+
+
+# VALIDAR CORREO
+def validar_correo(correo):
+
+    patron = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|es|com\.es|edu\.ec)$"
+
+    return re.match(patron, correo)
+
+
+# MOSTRAR RESULTADO 
+def mostrar_resultado(acceso_valido):
+
+    if acceso_valido is True:
+
+        messagebox.showinfo(
+            "Acceso",
+            "Acceso concedido"
+        )
+
+        ventana_login.destroy()
+
+        crear_sistema_clientes()
+
+    elif acceso_valido is False:
+
+        messagebox.showerror(
+            "Acceso",
+            "Acceso denegado"
+        )
+
+    else:
+
+        messagebox.showerror(
+            "Error",
+            "Se excedió el número máximo de usuarios"
+        )
+
+# INICIAR SESIÓN
+def iniciar_sesion():
+
+    nombre_usuario = entrada_usuario.get()
+    contrasena = entrada_contrasena.get()
+
+    acceso_valido = validar_credenciales(
+        nombre_usuario,
+        contrasena
+    )
+
+    mostrar_resultado(acceso_valido)
+
+
+# AGREGAR CLIENTE
+def agregar_cliente():
+
+    nombre = entrada_nombre.get()
+    cedula = entrada_cedula.get()
+    telefono = entrada_telefono.get()
+    correo = entrada_correo.get()
+    pais = pais_var.get()
+
+    # VALIDAR CAMPOS VACÍOS
+    if (
+        nombre == ""
+        or cedula == ""
+        or telefono == ""
+        or correo == ""
+    ):
+
+        messagebox.showerror(
+            "Error",
+            "Todos los campos son obligatorios"
+        )
+
+        return
+
+    # VALIDAR NOMBRE
+    if not validar_nombre(nombre):
+
+        messagebox.showerror(
+            "Error",
+            "Nombre inválido"
+        )
+
+        return
+
+    # VALIDAR CÉDULA
+    if not validar_cedula(pais, cedula):
+
+        messagebox.showerror(
+            "Error",
+            "Cédula inválida"
+        )
+
+        return
+
+    # VALIDAR TELÉFONO
+    if not validar_telefono(pais, telefono):
+
+        messagebox.showerror(
+            "Error",
+            "Teléfono inválido"
+        )
+
+        return
+
+    # VALIDAR CORREO
+    if not validar_correo(correo):
+
+        messagebox.showerror(
+            "Error",
+            "Correo inválido"
+        )
+
+        return
+
+    # GUARDAR CLIENTE
+    cliente = {
+        "nombre": nombre,
+        "cedula": cedula,
+        "telefono": telefono,
+        "correo": correo,
+        "pais": pais
+    }
+
+    clientes.append(cliente)
+
+    messagebox.showinfo(
+        "Éxito",
+        "Cliente agregado correctamente"
+    )
+
+    limpiar_campos()
+
+    mostrar_clientes()
+
+
+# MOSTRAR CLIENTES
+def mostrar_clientes():
+
+    lista_clientes.delete(0, tk.END)
+
+    for indice, cliente in enumerate(clientes):
+
+        texto = (
+            f"{indice + 1}. "
+            f"{cliente['nombre']} | "
+            f"{cliente['pais']} | "
+            f"{cliente['cedula']} | "
+            f"{cliente['telefono']} | "
+            f"{cliente['correo']}"
+        )
+
+        lista_clientes.insert(
+            tk.END,
+            texto
+        )
+
+
+# ELIMINAR CLIENTE
+def eliminar_cliente():
+
+    seleccion = lista_clientes.curselection()
+
+    if not seleccion:
+
+        messagebox.showwarning(
+            "Advertencia",
+            "Seleccione un cliente"
+        )
+
+        return
+
+    indice = seleccion[0]
+
+    clientes.pop(indice)
+
+    messagebox.showinfo(
+        "Éxito",
+        "Cliente eliminado"
+    )
+
+    mostrar_clientes()
+
+# LIMPIAR CAMPOS
+def limpiar_campos():
+
+    entrada_nombre.delete(0, tk.END)
+    entrada_cedula.delete(0, tk.END)
+    entrada_telefono.delete(0, tk.END)
+    entrada_correo.delete(0, tk.END)
+
+# INTERFAZ LOGIN
+def crear_interfaz_login():
+
+    global ventana_login
+    global entrada_usuario
+    global entrada_contrasena
+
+    ventana_login = tk.Tk()
+
+    ventana_login.title("Inicio de Sesión")
+
+    ventana_login.geometry("300x250")
+
+    tk.Label(
+        ventana_login,
+        text="USUARIO",
+        font=("Arial", 12, "bold")
+    ).pack(pady=5)
+
+    entrada_usuario = tk.Entry(ventana_login)
+
+    entrada_usuario.pack()
+
+    tk.Label(
+        ventana_login,
+        text="CONTRASEÑA",
+        font=("Arial", 12, "bold")
+    ).pack(pady=5)
+
+    entrada_contrasena = tk.Entry(
+        ventana_login,
+        show="*"
+    )
+
+    entrada_contrasena.pack()
+
+    tk.Button(
+        ventana_login,
+        text="Ingresar",
+        command=iniciar_sesion,
+        width=15
+    ).pack(pady=20)
+
+    ventana_login.mainloop()
+
+# SISTEMA CLIENTES
+def crear_sistema_clientes():
+
+    global entrada_nombre
+    global entrada_cedula
+    global entrada_telefono
+    global entrada_correo
+    global lista_clientes
+    global pais_var
+
+    ventana = tk.Tk()
+
+    ventana.title(
+        "Sistema de Gestión de Clientes"
+    )
+
+    ventana.geometry("700x600")
+
+    # TÍTULO
+    tk.Label(
+        ventana,
+        text="GESTIÓN DE CLIENTES",
+        font=("Arial", 16, "bold")
+    ).pack(pady=10)
+
+    # NOMBRE
+    tk.Label(
+        ventana,
+        text="Nombre"
+    ).pack()
+
+    entrada_nombre = tk.Entry(
+        ventana,
+        width=40
+    )
+
+    entrada_nombre.pack()
+
+    # PAÍS
+    tk.Label(
+        ventana,
+        text="País"
+    ).pack()
+
+    opciones_pais = [
+        "EC",
+        "PE",
+        "ES",
+        "CO",
+        "MX"
+    ]
+
+    pais_var = tk.StringVar()
+
+    pais_var.set("EC")
+
+    menu_pais = tk.OptionMenu(
+        ventana,
+        pais_var,
+        *opciones_pais
+    )
+
+    menu_pais.pack()
+
+    # CÉDULA
+    tk.Label(
+        ventana,
+        text="Cédula"
+    ).pack()
+
+    entrada_cedula = tk.Entry(
+        ventana,
+        width=40
+    )
+
+    entrada_cedula.pack()
+
+    # TELÉFONO
+    tk.Label(
+        ventana,
+        text="Teléfono"
+    ).pack()
+
+    entrada_telefono = tk.Entry(
+        ventana,
+        width=40
+    )
+
+    entrada_telefono.pack()
+
+    # CORREO
+    tk.Label(
+        ventana,
+        text="Correo"
+    ).pack()
+
+    entrada_correo = tk.Entry(
+        ventana,
+        width=40
+    )
+
+    entrada_correo.pack()
+
+    # BOTÓN AGREGAR
+    tk.Button(
+        ventana,
+        text="Agregar Cliente",
+        command=agregar_cliente,
+        width=20,
+        bg="green",
+        fg="white"
+    ).pack(pady=10)
+
+    # BOTÓN ELIMINAR
+    tk.Button(
+        ventana,
+        text="Eliminar Cliente",
+        command=eliminar_cliente,
+        width=20,
+        bg="red",
+        fg="white"
+    ).pack(pady=5)
+
+    # LISTA
+    lista_clientes = tk.Listbox(
+        ventana,
+        width=90,
+        height=15
+    )
+
+    lista_clientes.pack(pady=15)
+
+    ventana.mainloop()
+
+# FUNCIÓN PRINCIPAL
+def main():
+
+    crear_interfaz_login()
+
+# EJECUCIÓN
+if __name__ == "__main__":
+
+    main()
