@@ -1,5 +1,5 @@
-"""
-Programa: Sistema de acceso (POO con interfaz)
+""
+Programa: Sistema de Inicio de Sesión
 Propósito: Validar acceso usando objetos y una interfaz gráfica.
 """
 
@@ -27,8 +27,12 @@ class Aplicacion:
 
     def __init__(self, root):
         self.root = root
-        self.root.title("Acceso - POO")
-        self.root.geometry("300x200")
+
+        # CAMBIO DEL TÍTULO DE LA VENTANA
+        self.root.title("Sistema de Inicio de Sesión")
+
+        self.root.geometry("350x250")
+        self.root.configure(bg="#f4f6f7")
 
         self.lista_usuarios = [
             Usuario("admin", "1234"),
@@ -40,31 +44,73 @@ class Aplicacion:
 
     def crear_interfaz(self):
         """Crea los elementos de la interfaz"""
-        tk.Label(self.root, text="Usuario").pack(pady=5)
-        self.entrada_usuario = tk.Entry(self.root)
-        self.entrada_usuario.pack()
 
-        tk.Label(self.root, text="Contraseña").pack(pady=5)
-        self.entrada_contrasena = tk.Entry(self.root, show="*")
-        self.entrada_contrasena.pack()
+        titulo = tk.Label(
+            self.root,
+            text="INICIO DE SESIÓN",
+            font=("Arial", 16, "bold"),
+            bg="#f4f6f7",
+            fg="#2c3e50"
+        )
+        titulo.pack(pady=10)
 
-        tk.Button(self.root, text="Ingresar", command=self.iniciar_sesion).pack(pady=15)
+        tk.Label(
+            self.root,
+            text="Usuario",
+            font=("Arial", 11),
+            bg="#f4f6f7"
+        ).pack(pady=5)
+
+        self.entrada_usuario = tk.Entry(self.root, font=("Arial", 11))
+        self.entrada_usuario.pack(pady=5)
+
+        tk.Label(
+            self.root,
+            text="Contraseña",
+            font=("Arial", 11),
+            bg="#f4f6f7"
+        ).pack(pady=5)
+
+        self.entrada_contrasena = tk.Entry(
+            self.root,
+            show="*",
+            font=("Arial", 11)
+        )
+        self.entrada_contrasena.pack(pady=5)
+
+        # CAMBIO DEL TEXTO Y ESTILO DEL BOTÓN
+        tk.Button(
+            self.root,
+            text="INICIAR SESIÓN",
+            command=self.iniciar_sesion,
+            bg="#3b82f6",
+            fg="white",
+            font=("Arial", 11, "bold")
+        ).pack(pady=20)
 
     def iniciar_sesion(self):
         """Procesa el inicio de sesión"""
+
         nombre_usuario = self.entrada_usuario.get()
         contrasena = self.entrada_contrasena.get()
 
         for usuario in self.lista_usuarios:
             if usuario.validar_acceso(nombre_usuario, contrasena):
-                messagebox.showinfo("Acceso", "Acceso concedido")
+                messagebox.showinfo(
+                    "Acceso Correcto",
+                    f"Bienvenido {nombre_usuario}"
+                )
                 return
 
-        messagebox.showerror("Acceso", "Acceso denegado")
+        messagebox.showerror(
+            "Error",
+            "Usuario o contraseña incorrectos"
+        )
 
 
 def main():
     """Función principal"""
+
     root = tk.Tk()
     app = Aplicacion(root)
     root.mainloop()
